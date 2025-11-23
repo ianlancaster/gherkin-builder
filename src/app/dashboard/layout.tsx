@@ -1,8 +1,8 @@
 'use client';
 
-import { AppShell, Burger, Group, Skeleton, Text, NavLink, Button, Title } from '@mantine/core';
+import { AppShell, Burger, Group, Skeleton, Text, NavLink, Button, Title, ActionIcon, useMantineColorScheme } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconHome, IconPlus, IconLogout } from '@tabler/icons-react';
+import { IconHome, IconPlus, IconLogout, IconSun, IconMoon } from '@tabler/icons-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
@@ -16,6 +16,7 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -40,9 +41,19 @@ export default function DashboardLayout({
                     <Text span inherit variant="gradient" gradient={{ from: 'blue', to: 'cyan' }}>Gherkin Builder</Text>
                 </Title>
             </Group>
-            <Button variant="subtle" color="red" leftSection={<IconLogout size={18} />} onClick={handleLogout}>
-                Logout
-            </Button>
+            <Group>
+                <ActionIcon
+                    variant="default"
+                    onClick={toggleColorScheme}
+                    size="lg"
+                    aria-label="Toggle color scheme"
+                >
+                    {colorScheme === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
+                </ActionIcon>
+                <Button variant="subtle" color="red" leftSection={<IconLogout size={18} />} onClick={handleLogout}>
+                    Logout
+                </Button>
+            </Group>
         </Group>
       </AppShell.Header>
 
