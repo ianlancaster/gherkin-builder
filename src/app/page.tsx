@@ -1,66 +1,77 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
 
-export default function Home() {
+import { Container, Title, Text, Button, Group, Stack, ThemeIcon, SimpleGrid, Card, rem } from '@mantine/core';
+import { IconWand, IconRobot, IconCode, IconArrowRight } from '@tabler/icons-react';
+import Link from 'next/link';
+
+export default function LandingPage() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <Container size="lg" py="xl">
+      <Stack gap="xl" align="center" py={80}>
+        <Group justify="center">
+          <ThemeIcon size={60} radius="md" variant="gradient" gradient={{ from: 'blue', to: 'cyan' }}>
+            <IconRobot style={{ width: rem(32), height: rem(32) }} stroke={1.5} />
+          </ThemeIcon>
+        </Group>
+
+        <Title order={1} style={{ fontSize: rem(48), fontWeight: 900, textAlign: 'center' }}>
+          Automate Your Gherkin <Text span inherit variant="gradient" gradient={{ from: 'blue', to: 'cyan' }}>Specs</Text>
+        </Title>
+
+        <Text c="dimmed" size="xl" maw={600} ta="center">
+          Turn any website into a comprehensive suite of Gherkin scenarios instantly.
+          Powered by Agentic AI to understand your application's behavior.
+        </Text>
+
+        <Group>
+          <Button component={Link} href="/login" size="xl" radius="md" variant="gradient" gradient={{ from: 'blue', to: 'cyan' }} rightSection={<IconArrowRight size={18} />}>
+            Get Started
+          </Button>
+          <Button component={Link} href="#features" size="xl" radius="md" variant="default">
+            Learn more
+          </Button>
+        </Group>
+      </Stack>
+
+      <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl" py={50} id="features">
+        <FeatureCard
+          icon={IconWand}
+          title="Instant Generation"
+          description="Just provide a URL. Our agent browses your site and generates Gherkin syntax automatically."
         />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        <FeatureCard
+          icon={IconCode}
+          title="Standard Compliant"
+          description="Generates valid Gherkin syntax compatible with Cucumber, Behave, and other BDD frameworks."
+        />
+        <FeatureCard
+          icon={IconRobot}
+          title="Agentic Exploration"
+          description="Our AI agent intelligently navigates through your application to discover edge cases and user flows."
+        />
+      </SimpleGrid>
+    </Container>
+  );
+}
+
+function FeatureCard({ icon: Icon, title, description }: { icon: any, title: string, description: string }) {
+  return (
+    <Card shadow="sm" padding="lg" radius="md" withBorder>
+      <Card.Section>
+        {/* Image or visual could go here */}
+      </Card.Section>
+
+      <Group justify="space-between" mt="md" mb="xs">
+        <ThemeIcon size={40} radius="md" variant="light" color="blue">
+          <Icon style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
+        </ThemeIcon>
+      </Group>
+
+      <Text fw={500} size="lg" mt="md">{title}</Text>
+
+      <Text size="sm" c="dimmed" mt="sm">
+        {description}
+      </Text>
+    </Card>
   );
 }
