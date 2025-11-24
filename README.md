@@ -2,6 +2,8 @@
 
 An agentic AI application that automatically generates Gherkin feature files (Cucumber syntax) from any website URL.
 
+![Demo](./public/gherkin-builder-demo.gif)
+
 ## 🚀 Getting Started
 
 Follow these steps to get the application running locally.
