@@ -1,7 +1,8 @@
 'use client';
 
-import { Container, Title, Text, Badge, Group, Card, Stack, Code, Accordion, Alert, Loader } from '@mantine/core';
-import { IconCheck, IconX, IconAlertCircle } from '@tabler/icons-react';
+import { Badge, Card, Container, Group, Stack, Text, Title, Code, Grid, Accordion, Alert, Loader } from '@mantine/core';
+import { IconCheck, IconX, IconLoader, IconAlertCircle } from '@tabler/icons-react';
+import { ChatInterface } from '@/components/ChatInterface';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -24,74 +25,90 @@ export default function ScanResultsClient({ scan }: { scan: Scan }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Only poll if the status is pending or processing
     if (scan.status === 'pending' || scan.status === 'processing') {
       const interval = setInterval(() => {
         router.refresh();
-      }, 3000); // Poll every 3 seconds
-
+      }, 3000);
       return () => clearInterval(interval);
     }
-    // If status is completed or failed, we don't need to do anything (interval is cleared on cleanup or not started)
   }, [scan.status, router]);
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed': return 'green';
+      case 'failed': return 'red';
+      case 'processing': return 'blue';
+      default: return 'gray';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'completed': return <IconCheck size={14} />;
+      case 'failed': return <IconX size={14} />;
+      case 'processing': return <IconLoader size={14} />;
+      default: return null;
+    }
+  };
+
   return (
-    <Container size="xl" py="xl">
-      <Group justify="space-between" mb="xl">
-        <Stack gap={0}>
-            <Title order={2}>Scan Results</Title>
-            <Text c="dimmed">{scan.url}</Text>
-        </Stack>
-        <Badge
-            size="xl"
-            color={scan.status === 'completed' ? 'green' : scan.status === 'failed' ? 'red' : 'blue'}
-            leftSection={
-                scan.status === 'completed' ? <IconCheck size={16} /> :
-                scan.status === 'failed' ? <IconX size={16} /> :
-                <Loader size={16} color="white" />
-            }
-        >
-          {scan.status}
-        </Badge>
-      </Group>
+    <Container size="xl" py="md">
+      <Stack gap="xl">
+        <Grid>
+            <Grid.Col span={{ base: 12, md: 7 }}>
+                <Stack gap="xs">
+                    <Title order={2}>Scan Results</Title>
+                  <Text c="dimmed">{scan.url}</Text>
+                    <Badge size="lg" color={getStatusColor(scan.status)} leftSection={getStatusIcon(scan.status)}>
+                      {scan.status}
+                    </Badge>
+                </Stack>
 
-      {scan.status === 'failed' && (
-        <Alert icon={<IconAlertCircle size={16} />} title="Scan Failed" color="red" mb="xl">
-          Something went wrong while scanning the website. Please try again.
-        </Alert>
-      )}
+                {scan.status === 'failed' && (
+                    <Alert icon={<IconAlertCircle size={16} />} title="Scan Failed" color="red">
+                    Something went wrong while scanning the website. Please try again.
+                    </Alert>
+                )}
 
-      {scan.features && scan.features.length > 0 ? (
-        <Stack>
-            <Title order={3}>Generated Features</Title>
-            <Accordion variant="separated">
-                {scan.features.map((feature) => (
-                    <Accordion.Item key={feature.id} value={feature.id}>
-                        <Accordion.Control icon={<IconCheck size={16} color="green" />}>
-                            <Text fw={500}>{feature.title}</Text>
-                            <Text size="xs" c="dimmed">{feature.file_path}</Text>
+                <Title order={3} mb="md" mt="md">Generated Features</Title>
+                {scan.features?.length > 0 && (
+                  <Accordion variant="separated">
+                    {scan.features.map((feature) => (
+                      <Accordion.Item key={feature.id} value={feature.id}>
+                        <Accordion.Control>
+                          <Group justify="space-between">
+                            <Text fw={600}>{feature.title}</Text>
+                            <Code>{feature.file_path}</Code>
+                          </Group>
                         </Accordion.Control>
                         <Accordion.Panel>
-                            <Text size="sm" mb="xs">{feature.description}</Text>
-                            <Code block>{feature.content}</Code>
+                          <Text size="sm" c="dimmed" mb="md">{feature.description}</Text>
+                          <Code block style={{ whiteSpace: 'pre-wrap' }}>
+                            {feature.content}
+                          </Code>
                         </Accordion.Panel>
-                    </Accordion.Item>
-                ))}
-            </Accordion>
-        </Stack>
-      ) : (
-        <Card withBorder padding="xl" radius="md" style={{ textAlign: 'center' }}>
-            {scan.status === 'completed' ? (
-                <Text>No features were generated for this scan.</Text>
-            ) : (
-                <Stack align="center">
-                    <Loader size="lg" />
-                    <Text>Scanning in progress... This may take a few minutes.</Text>
-                    <Text size="sm" c="dimmed">We are browsing the website and generating Gherkin scenarios.</Text>
-                </Stack>
-            )}
-        </Card>
-      )}
+                      </Accordion.Item>
+                    ))}
+                  </Accordion>
+                )}
+                {scan.features?.length === 0 && scan.status === 'completed' && (
+                    <Text c="dimmed">No features generated.</Text>
+                )}
+                {scan.status === 'processing' && (
+                    <Card withBorder padding="xl" radius="md" style={{ textAlign: 'center' }}>
+                        <Stack align="center">
+                            <Loader size="lg" />
+                            <Text>Scanning in progress...</Text>
+                        </Stack>
+                    </Card>
+                )}
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, md: 5 }}>
+                <ChatInterface scanId={scan.id} />
+            </Grid.Col>
+        </Grid>
+      </Stack>
     </Container>
   );
 }

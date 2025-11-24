@@ -7,7 +7,7 @@ export async function scanWebsite(url: string) {
 
   try {
     console.log(`[Browser] Navigating to ${url}...`);
-    await page.goto(url, { waitUntil: 'networkidle' });
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
 
     // Extract page title
     const title = await page.title();
