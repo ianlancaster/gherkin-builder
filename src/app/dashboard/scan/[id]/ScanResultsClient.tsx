@@ -180,6 +180,7 @@ export default function ScanResultsClient({ scan }: { scan: Scan }) {
           <Grid.Col span={{ base: 12, md: 5 }}>
             <ChatInterface
               scanId={scan.id}
+              existingFeatures={scan.features}
               onToolExecuted={() => router.refresh()}
             />
           </Grid.Col>

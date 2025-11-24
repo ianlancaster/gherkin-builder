@@ -23,6 +23,7 @@ export default async function ScanResults({
     .from("scans")
     .select("*, features(*)")
     .eq("id", id)
+    .order("title", { referencedTable: "features", ascending: true })
     .single();
 
   if (!scan) {

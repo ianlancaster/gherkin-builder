@@ -85,6 +85,7 @@ ${f.content}
   const tools = {
     addFeature: tool({
       description: "Add a new Gherkin feature file to the database",
+      needsApproval: true,
       inputSchema: z.object({
         title: z.string().describe("The title of the feature"),
         description: z.string().describe("A brief description"),
@@ -120,6 +121,7 @@ ${f.content}
     }),
     updateFeature: tool({
       description: "Update an existing Gherkin feature file",
+      needsApproval: true,
       inputSchema: z.object({
         old_title: z
           .string()
@@ -142,6 +144,7 @@ ${f.content}
           .select("id")
           .eq("scan_id", scanId)
           .eq("title", old_title)
+          .order("title", { ascending: true })
           .single();
 
         if (!features) throw new Error(`Feature "${old_title}" not found.`);
@@ -162,6 +165,7 @@ ${f.content}
     }),
     deleteFeature: tool({
       description: "Delete a Gherkin feature file",
+      needsApproval: true,
       inputSchema: z.object({
         title: z.string().describe("The title of the feature to delete"),
       }),

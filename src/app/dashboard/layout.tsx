@@ -44,7 +44,7 @@ export default function DashboardLayout({
     <AppShell
       header={{ height: 60 }}
       navbar={{
-        width: 300,
+        width: 220,
         breakpoint: "sm",
         collapsed: { mobile: !opened },
       }}
