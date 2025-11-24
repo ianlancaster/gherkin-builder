@@ -1,11 +1,28 @@
-'use client';
+"use client";
 
-import { AppShell, Burger, Group, Skeleton, Text, NavLink, Button, Title, ActionIcon, useMantineColorScheme } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { IconHome, IconPlus, IconLogout, IconSun, IconMoon } from '@tabler/icons-react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { createClient } from '@/utils/supabase/client';
+import {
+  AppShell,
+  Burger,
+  Group,
+  Skeleton,
+  Text,
+  NavLink,
+  Button,
+  Title,
+  ActionIcon,
+  useMantineColorScheme,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import {
+  IconHome,
+  IconPlus,
+  IconLogout,
+  IconSun,
+  IconMoon,
+} from "@tabler/icons-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
 export default function DashboardLayout({
   children,
@@ -20,7 +37,7 @@ export default function DashboardLayout({
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push('/login');
+    router.push("/login");
   };
 
   return (
@@ -28,51 +45,72 @@ export default function DashboardLayout({
       header={{ height: 60 }}
       navbar={{
         width: 300,
-        breakpoint: 'sm',
+        breakpoint: "sm",
         collapsed: { mobile: !opened },
       }}
       padding="md"
     >
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
-            <Group>
-                <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-                <Title order={3}>
-                    <Text span inherit variant="gradient" gradient={{ from: 'blue', to: 'cyan' }}>Gherkin Builder</Text>
-                </Title>
-            </Group>
-            <Group>
-                <ActionIcon
-                    variant="default"
-                    onClick={toggleColorScheme}
-                    size="lg"
-                    aria-label="Toggle color scheme"
-                >
-                    {colorScheme === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
-                </ActionIcon>
-                <Button variant="subtle" color="red" leftSection={<IconLogout size={18} />} onClick={handleLogout}>
-                    Logout
-                </Button>
-            </Group>
+          <Group>
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              hiddenFrom="sm"
+              size="sm"
+            />
+            <Title order={3}>
+              <Text
+                span
+                inherit
+                variant="gradient"
+                gradient={{ from: "blue", to: "cyan" }}
+              >
+                Gherkin Builder
+              </Text>
+            </Title>
+          </Group>
+          <Group>
+            <ActionIcon
+              variant="default"
+              onClick={toggleColorScheme}
+              size="lg"
+              aria-label="Toggle color scheme"
+            >
+              {colorScheme === "dark" ? (
+                <IconSun size={20} />
+              ) : (
+                <IconMoon size={20} />
+              )}
+            </ActionIcon>
+            <Button
+              variant="subtle"
+              color="red"
+              leftSection={<IconLogout size={18} />}
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
+          </Group>
         </Group>
       </AppShell.Header>
 
       <AppShell.Navbar p="md">
         <NavLink
-            component={Link}
-            href="/dashboard"
-            label="Dashboard"
-            leftSection={<IconHome size={20} />}
-            active={pathname === '/dashboard'}
-            variant="light"
+          component={Link}
+          href="/dashboard"
+          label="Dashboard"
+          leftSection={<IconHome size={20} />}
+          active={pathname === "/dashboard"}
+          variant="light"
         />
         <NavLink
-            component={Link}
-            href="/dashboard/new"
-            label="New Scan"
-            leftSection={<IconPlus size={20} />}
-            active={pathname === '/dashboard/new'}
-            variant="light"
+          component={Link}
+          href="/dashboard/new"
+          label="New Scan"
+          leftSection={<IconPlus size={20} />}
+          active={pathname === "/dashboard/new"}
+          variant="light"
         />
       </AppShell.Navbar>
 

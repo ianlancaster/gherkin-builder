@@ -1,10 +1,19 @@
-'use client';
+"use client";
 
-import { Container, Title, Text, Button, Group, Card, Badge, SimpleGrid } from '@mantine/core';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
-import Link from 'next/link';
-import { useState } from 'react';
-import { deleteScan } from '../actions';
+import {
+  Container,
+  Title,
+  Text,
+  Button,
+  Group,
+  Card,
+  Badge,
+  SimpleGrid,
+} from "@mantine/core";
+import { IconPlus, IconTrash } from "@tabler/icons-react";
+import Link from "next/link";
+import { useState } from "react";
+import { deleteScan } from "../actions";
 
 interface Scan {
   id: string;
@@ -26,8 +35,8 @@ export default function DashboardClient({ scans }: { scans: Scan[] | null }) {
     try {
       await deleteScan(id);
     } catch (error) {
-      console.error('Delete error:', error);
-      alert('Failed to delete scan: ' + (error as Error).message);
+      console.error("Delete error:", error);
+      alert("Failed to delete scan: " + (error as Error).message);
     } finally {
       setLoadingId(null);
     }
@@ -37,7 +46,11 @@ export default function DashboardClient({ scans }: { scans: Scan[] | null }) {
     <Container size="xl">
       <Group justify="space-between" mb="xl">
         <Title order={2}>Your Scans</Title>
-        <Button component={Link} href="/dashboard/new" leftSection={<IconPlus size={18} />}>
+        <Button
+          component={Link}
+          href="/dashboard/new"
+          leftSection={<IconPlus size={18} />}
+        >
           New Scan
         </Button>
       </Group>
@@ -47,8 +60,18 @@ export default function DashboardClient({ scans }: { scans: Scan[] | null }) {
           {scans.map((scan) => (
             <Card key={scan.id} shadow="sm" padding="lg" radius="md" withBorder>
               <Group justify="space-between" mb="xs">
-                <Text fw={500} truncate>{scan.url}</Text>
-                <Badge color={scan.status === 'completed' ? 'green' : scan.status === 'failed' ? 'red' : 'blue'}>
+                <Text fw={500} truncate>
+                  {scan.url}
+                </Text>
+                <Badge
+                  color={
+                    scan.status === "completed"
+                      ? "green"
+                      : scan.status === "failed"
+                        ? "red"
+                        : "blue"
+                  }
+                >
                   {scan.status}
                 </Badge>
               </Group>
@@ -58,7 +81,14 @@ export default function DashboardClient({ scans }: { scans: Scan[] | null }) {
               </Text>
 
               <Group gap="xs">
-                <Button component={Link} href={`/dashboard/scan/${scan.id}`} variant="light" color="blue" radius="md" style={{ flex: 1 }}>
+                <Button
+                  component={Link}
+                  href={`/dashboard/scan/${scan.id}`}
+                  variant="light"
+                  color="blue"
+                  radius="md"
+                  style={{ flex: 1 }}
+                >
                   View Results
                 </Button>
                 <Button
@@ -76,10 +106,23 @@ export default function DashboardClient({ scans }: { scans: Scan[] | null }) {
           ))}
         </SimpleGrid>
       ) : (
-        <Card withBorder padding="xl" radius="md" style={{ textAlign: 'center' }}>
-          <Text size="lg" fw={500} mb="md">No scans yet</Text>
-          <Text c="dimmed" mb="xl">Start by creating your first scan to generate Gherkin features.</Text>
-          <Button component={Link} href="/dashboard/new" leftSection={<IconPlus size={18} />}>
+        <Card
+          withBorder
+          padding="xl"
+          radius="md"
+          style={{ textAlign: "center" }}
+        >
+          <Text size="lg" fw={500} mb="md">
+            No scans yet
+          </Text>
+          <Text c="dimmed" mb="xl">
+            Start by creating your first scan to generate Gherkin features.
+          </Text>
+          <Button
+            component={Link}
+            href="/dashboard/new"
+            leftSection={<IconPlus size={18} />}
+          >
             Create Scan
           </Button>
         </Card>

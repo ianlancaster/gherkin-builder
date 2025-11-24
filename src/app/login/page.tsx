@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   TextInput,
@@ -13,15 +13,15 @@ import {
   Button,
   Divider,
   Stack,
-} from '@mantine/core';
-import { createClient } from '@/utils/supabase/client';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { IconBrandGithub } from '@tabler/icons-react';
+} from "@mantine/core";
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { IconBrandGithub } from "@tabler/icons-react";
 
 export default function AuthenticationTitle() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -39,7 +39,7 @@ export default function AuthenticationTitle() {
       setError(error.message);
       setLoading(false);
     } else {
-      router.push('/dashboard');
+      router.push("/dashboard");
     }
   };
 
@@ -55,7 +55,7 @@ export default function AuthenticationTitle() {
       setError(error.message);
       setLoading(false);
     } else {
-      setError('Check your email for the confirmation link.');
+      setError("Check your email for the confirmation link.");
       setLoading(false);
     }
   };
@@ -66,7 +66,7 @@ export default function AuthenticationTitle() {
         Welcome back!
       </Title>
       <Text c="dimmed" size="sm" ta="center" mt={5}>
-        Do not have an account yet?{' '}
+        Do not have an account yet?{" "}
         <Anchor size="sm" component="button" onClick={handleSignUp}>
           Create account
         </Anchor>
@@ -114,7 +114,7 @@ export default function AuthenticationTitle() {
             variant="default"
             leftSection={<IconBrandGithub size={16} />}
             onClick={() => {
-                // Implement GitHub login
+              // Implement GitHub login
             }}
           >
             GitHub

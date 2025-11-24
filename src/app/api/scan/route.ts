@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
-import { createServiceClient } from '@/utils/supabase/service';
-import { scanWebsite } from '@/lib/agent/browser';
-import { generateGherkin } from '@/lib/agent/generator';
+import { NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server";
+import { createServiceClient } from "@/utils/supabase/service";
+import { scanWebsite } from "@/lib/agent/browser";
+import { generateGherkin } from "@/lib/agent/generator";
 
 export async function POST(request: Request) {
   const { scanId, url } = await request.json();
@@ -14,16 +14,16 @@ export async function POST(request: Request) {
   } = await supabase.auth.getSession();
 
   if (!session?.user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const accessToken = session.access_token;
 
   // Update scan status to processing
   await supabase
-    .from('scans')
-    .update({ status: 'processing' })
-    .eq('id', scanId);
+    .from("scans")
+    .update({ status: "processing" })
+    .eq("id", scanId);
 
   // Start the scan process asynchronously (fire-and-forget)
   // Note: In a Vercel Serverless environment, this might be killed if the function returns.
@@ -37,48 +37,74 @@ export async function POST(request: Request) {
     try {
       console.log(`[Scan ${scanId}] Launching browser...`);
       const scanData = await scanWebsite(url);
-      console.log(`[Scan ${scanId}] Browser scan complete. Title: ${scanData.title}`);
+      console.log(
+        `[Scan ${scanId}] Browser scan complete. Title: ${scanData.title}`
+      );
+
+      // Save scan data to database
+      const { error: scanDataError } = await serviceClient
+        .from("scans")
+        .update({
+          scan_data: scanData,
+          last_scanned_at: new Date().toISOString(),
+        })
+        .eq("id", scanId);
+
+      if (scanDataError) {
+        console.error(
+          `[Scan ${scanId}] Failed to save scan data:`,
+          scanDataError
+        );
+      }
 
       console.log(`[Scan ${scanId}] Generating Gherkin...`);
       const features = await generateGherkin(url, scanData);
-      console.log(`[Scan ${scanId}] Gherkin generation complete. Features: ${features.length}`);
+      console.log(
+        `[Scan ${scanId}] Gherkin generation complete. Features: ${features.length}`
+      );
 
       // Save features to database
       for (const feature of features) {
-        const { error } = await serviceClient.from('features').insert({
+        const { error } = await serviceClient.from("features").insert({
           scan_id: scanId,
           title: feature.title,
           description: feature.description,
           file_path: feature.file_path,
           content: feature.content,
         });
-        if (error) console.error(`[Scan ${scanId}] Error saving feature:`, error);
+        if (error)
+          console.error(`[Scan ${scanId}] Error saving feature:`, error);
       }
       console.log(`[Scan ${scanId}] Features saved to DB.`);
 
       // Update scan status to completed
       const { error: updateError } = await serviceClient
-        .from('scans')
-        .update({ status: 'completed' })
-        .eq('id', scanId);
+        .from("scans")
+        .update({ status: "completed" })
+        .eq("id", scanId);
 
       if (updateError) {
-        console.error(`[Scan ${scanId}] Failed to update status to completed:`, updateError);
+        console.error(
+          `[Scan ${scanId}] Failed to update status to completed:`,
+          updateError
+        );
       } else {
         console.log(`[Scan ${scanId}] Scan completed successfully.`);
       }
-
     } catch (error) {
       console.error(`[Scan ${scanId}] Scan failed:`, error);
 
       // Update scan status to failed
       const { error: updateError } = await serviceClient
-        .from('scans')
-        .update({ status: 'failed' })
-        .eq('id', scanId);
+        .from("scans")
+        .update({ status: "failed" })
+        .eq("id", scanId);
 
       if (updateError) {
-        console.error(`[Scan ${scanId}] Failed to update status to failed:`, updateError);
+        console.error(
+          `[Scan ${scanId}] Failed to update status to failed:`,
+          updateError
+        );
       }
     }
   })();

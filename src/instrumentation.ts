@@ -7,13 +7,13 @@ const shouldExportSpan: ShouldExportSpan = (span) => {
 };
 
 export async function register() {
-    const langfuseSpanProcessor = new LangfuseSpanProcessor({
-        shouldExportSpan,
-    });
+  const langfuseSpanProcessor = new LangfuseSpanProcessor({
+    shouldExportSpan,
+  });
 
-    const tracerProvider = new NodeTracerProvider({
-        spanProcessors: [langfuseSpanProcessor],
-    });
+  const tracerProvider = new NodeTracerProvider({
+    spanProcessors: [langfuseSpanProcessor],
+  });
 
-    tracerProvider.register();
+  tracerProvider.register();
 }

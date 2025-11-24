@@ -1,11 +1,18 @@
-'use client';
+"use client";
 
-import { Container, Title, TextInput, Button, Paper, Text } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { IconWorld } from '@tabler/icons-react';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { createClient } from '@/utils/supabase/client';
+import {
+  Container,
+  Title,
+  TextInput,
+  Button,
+  Paper,
+  Text,
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { IconWorld } from "@tabler/icons-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
 export default function NewScan() {
   const [loading, setLoading] = useState(false);
@@ -14,11 +21,16 @@ export default function NewScan() {
 
   const form = useForm({
     initialValues: {
-      url: '',
+      url: "",
     },
 
     validate: {
-      url: (value) => (/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/.test(value) ? null : 'Invalid URL'),
+      url: (value) =>
+        /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/.test(
+          value,
+        )
+          ? null
+          : "Invalid URL",
     },
   });
 
@@ -26,33 +38,35 @@ export default function NewScan() {
     setLoading(true);
 
     // 1. Create scan record in Supabase
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
-        router.push('/login');
-        return;
+      router.push("/login");
+      return;
     }
 
     const { data: scan, error } = await supabase
-        .from('scans')
-        .insert({
-            url: values.url,
-            user_id: user.id,
-            status: 'pending'
-        })
-        .select()
-        .single();
+      .from("scans")
+      .insert({
+        url: values.url,
+        user_id: user.id,
+        status: "pending",
+      })
+      .select()
+      .single();
 
     if (error) {
-        console.error('Error creating scan:', error);
-        setLoading(false);
-        return;
+      console.error("Error creating scan:", error);
+      setLoading(false);
+      return;
     }
 
     // 2. Trigger the API route to start the agent
-    fetch('/api/scan', {
-        method: 'POST',
-        body: JSON.stringify({ scanId: scan.id, url: values.url }),
+    fetch("/api/scan", {
+      method: "POST",
+      body: JSON.stringify({ scanId: scan.id, url: values.url }),
     });
 
     // 3. Redirect to the scan results page (which will show loading state)
@@ -61,17 +75,21 @@ export default function NewScan() {
 
   return (
     <Container size="sm" py="xl">
-      <Title order={2} mb="xl">New Scan</Title>
+      <Title order={2} mb="xl">
+        New Scan
+      </Title>
 
       <Paper withBorder shadow="md" p="xl" radius="md">
-        <Text size="lg" mb="md">Enter the URL you want to scan</Text>
+        <Text size="lg" mb="md">
+          Enter the URL you want to scan
+        </Text>
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <TextInput
             withAsterisk
             label="Website URL"
             placeholder="https://example.com"
             leftSection={<IconWorld size={16} />}
-            {...form.getInputProps('url')}
+            {...form.getInputProps("url")}
           />
 
           <Button type="submit" fullWidth mt="xl" loading={loading}>

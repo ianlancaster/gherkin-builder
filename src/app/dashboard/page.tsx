@@ -1,6 +1,6 @@
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
-import DashboardClient from './DashboardClient';
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+import DashboardClient from "./DashboardClient";
 
 export default async function Dashboard() {
   const supabase = await createClient();
@@ -10,13 +10,13 @@ export default async function Dashboard() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect('/login');
+    return redirect("/login");
   }
 
   const { data: scans } = await supabase
-    .from('scans')
-    .select('*')
-    .order('created_at', { ascending: false });
+    .from("scans")
+    .select("*")
+    .order("created_at", { ascending: false });
 
   return <DashboardClient scans={scans} />;
 }

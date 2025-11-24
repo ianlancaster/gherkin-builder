@@ -1,4 +1,4 @@
-import { chromium } from 'playwright';
+import { chromium } from "playwright";
 
 export async function scanWebsite(url: string) {
   console.log(`[Browser] Launching Chromium...`);
@@ -7,7 +7,7 @@ export async function scanWebsite(url: string) {
 
   try {
     console.log(`[Browser] Navigating to ${url}...`);
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
 
     // Extract page title
     const title = await page.title();
@@ -21,17 +21,21 @@ export async function scanWebsite(url: string) {
 
     // Get all interactive elements
     const interactiveElements = await page.evaluate(() => {
-      const elements = document.querySelectorAll('button, a, input, select, textarea');
-      return Array.from(elements).map(el => ({
+      const elements = document.querySelectorAll(
+        "button, a, input, select, textarea",
+      );
+      return Array.from(elements).map((el) => ({
         tagName: el.tagName.toLowerCase(),
-        text: el.textContent?.trim() || '',
+        text: el.textContent?.trim() || "",
         id: el.id,
         name: (el as any).name,
         placeholder: (el as any).placeholder,
         href: (el as any).href,
       }));
     });
-    console.log(`[Browser] Found ${interactiveElements.length} interactive elements.`);
+    console.log(
+      `[Browser] Found ${interactiveElements.length} interactive elements.`,
+    );
 
     return {
       title,
@@ -39,7 +43,7 @@ export async function scanWebsite(url: string) {
       interactiveElements,
     };
   } catch (error) {
-    console.error('[Browser] Error scanning website:', error);
+    console.error("[Browser] Error scanning website:", error);
     throw error;
   } finally {
     await browser.close();
